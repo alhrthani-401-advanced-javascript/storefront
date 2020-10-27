@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { selectCategory } from '../store/votes'
+import { addToCart } from '../../store/cart'
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -14,17 +14,10 @@ import Button from '@material-ui/core/Button';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
-
-    const useStyles = makeStyles((theme) => ({
-        root: {
-            '& > *': {
-                margin: theme.spacing(1),
-            },
-        },
-    }));
-
+ 
     return (
-        <div role="tabpanel" 
+        <div
+            role="tabpanel"
             hidden={value !== index}
             id={`simple-tabpanel-${index}`}
             aria-labelledby={`simple-tab-${index}`}
@@ -59,7 +52,8 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Status = props => {
+const Products = props => {
+    
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
 
@@ -68,7 +62,7 @@ const Status = props => {
         setValue(newValue);
     };
 
-    // console.log('----', props);
+    // console.log('props in product', props);
     // let selectedCategory = props.selectCategory;
     // function handleCategoryClick(e) {
     //     // console.log(e.target.textContent);
@@ -78,20 +72,11 @@ const Status = props => {
     return (
         <>
             <div className={classes.root}>
-                <AppBar position="static">
-                    <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
-                        {props.categories.map((category, idx) => {
-                            return <Tab key={idx} label={category} {...a11yProps(idx)} />
-                        })}
 
-                        {/* <Tab label="Item Two" {...a11yProps(1)} /> */}
-                        {/* <Tab label="Item Three" {...a11yProps(2)} /> */}
-                    </Tabs>
-                </AppBar>
                 <div style={{ display: 'flex' }}>
                     {props.products.map((product, idx) => {
-                        if (product.cat == props.slsectedCat) {
-                            // console.log('>>>>>>>>>>>>>', idx);
+                        if (product.cat == props.selectedCategory) {
+                            console.log('>>>>>>>>>>>>>', props.selectedCategory);
 
                             return (
                                 <div key={idx} style={{ border: '1px solid black', width: 'fit-content', padding: '10px', margin: '10px' }}>
@@ -99,8 +84,8 @@ const Status = props => {
                                     <img src={`${product.img}`} style={{ width: '15rem' }}></img>
                                     <p>in stok : {product.inStok}</p>
                                     <p>price : {product.price}</p>
-                                    <Button variant="contained" color="primary">Order</Button>
-                          
+                                    <Button onClick={()=>{props.addToCart(product)}} variant="contained" color="primary">Order</Button>
+
 
                                 </div>
                             )
@@ -114,23 +99,19 @@ const Status = props => {
 }
 
 
+
+
+
 // we only care about state from the store, no actions needed
 const mapStateToProps = state => ({
-    categories: state.votes.categories,
-    products: state.votes.products,
-    slsectedCat: state.votes.selectedCategory
+    selectedCategory: state.categories.selectedCategory,
+    cart: state.cart,
+    products: state.products.products  
 });
 
-const mapDispatchToProps = { selectCategory };
+const mapDispatchToProps = { addToCart };
 
-// no need to add dispatch part (no actions)
-export default connect(mapStateToProps, mapDispatchToProps)(Status);
-
-
-
-
-
-
+export default connect(mapStateToProps, mapDispatchToProps)(Products);
 
 
 
