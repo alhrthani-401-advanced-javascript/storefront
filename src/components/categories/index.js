@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { selectCategory } from '../store/votes'
+import { selectCategory } from '../../store/categories';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -13,18 +13,11 @@ import Button from '@material-ui/core/Button';
 
 
 function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-
-    const useStyles = makeStyles((theme) => ({
-        root: {
-            '& > *': {
-                margin: theme.spacing(1),
-            },
-        },
-    }));
+    const { children, value, index, ...other } = props;  
 
     return (
-        <div role="tabpanel" 
+        <div
+            role="tabpanel"
             hidden={value !== index}
             id={`simple-tabpanel-${index}`}
             aria-labelledby={`simple-tab-${index}`}
@@ -64,6 +57,7 @@ const Status = props => {
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
+        // console.log('event.target.textContent>>>',event.target.textContent);
         props.selectCategory(event.target.textContent)
         setValue(newValue);
     };
@@ -71,8 +65,8 @@ const Status = props => {
     // console.log('----', props);
     // let selectedCategory = props.selectCategory;
     // function handleCategoryClick(e) {
-    //     // console.log(e.target.textContent);
-    //     // selectedCategory = e.target.textContent
+    //     console.log(e.target.textContent);
+    //     selectedCategory = e.target.textContent
     //     selectCategory(e.target.textContent)
     // }
     return (
@@ -88,26 +82,7 @@ const Status = props => {
                         {/* <Tab label="Item Three" {...a11yProps(2)} /> */}
                     </Tabs>
                 </AppBar>
-                <div style={{ display: 'flex' }}>
-                    {props.products.map((product, idx) => {
-                        if (product.cat == props.slsectedCat) {
-                            // console.log('>>>>>>>>>>>>>', idx);
-
-                            return (
-                                <div key={idx} style={{ border: '1px solid black', width: 'fit-content', padding: '10px', margin: '10px' }}>
-                                    <h3>{product.name}</h3>
-                                    <img src={`${product.img}`} style={{ width: '15rem' }}></img>
-                                    <p>in stok : {product.inStok}</p>
-                                    <p>price : {product.price}</p>
-                                    <Button variant="contained" color="primary">Order</Button>
-                          
-
-                                </div>
-                            )
-
-                        }
-                    })}
-                </div>
+       
             </div>
         </>
     )
@@ -116,15 +91,17 @@ const Status = props => {
 
 // we only care about state from the store, no actions needed
 const mapStateToProps = state => ({
-    categories: state.votes.categories,
-    products: state.votes.products,
-    slsectedCat: state.votes.selectedCategory
+    categories: state.categories.categories,
 });
 
 const mapDispatchToProps = { selectCategory };
 
 // no need to add dispatch part (no actions)
 export default connect(mapStateToProps, mapDispatchToProps)(Status);
+
+
+
+
 
 
 
