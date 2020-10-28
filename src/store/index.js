@@ -9,13 +9,17 @@ import categories from './categories';
 import products from './products';
 import cart from './cart';
 
+import thunk from './middleware/thunk.js';
+
+
 
 
 // when you have more than one reducer combine here everything
 let reducers = combineReducers({categories,products,cart});
 
 const store = () => {
-  return createStore(reducers, composeWithDevTools());
+  return createStore(reducers, composeWithDevTools(applyMiddleware(thunk)));
+
 };
 
 export default store();
