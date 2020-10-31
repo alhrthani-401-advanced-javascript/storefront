@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { selectCategory } from '../../store/categories';
 import PropTypes from 'prop-types';
@@ -8,12 +8,18 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import { left } from '@popperjs/core';
-import Button from '@material-ui/core/Button';
-
+import { setCategories } from '../../store/categories'
+import {getCategoryeData} from '../../store/apiActions'
 
 function TabPanel(props) {
-    const { children, value, index, ...other } = props;  
+    const { children, value, index, ...other } = props;
+    const useStyles = makeStyles((theme) => ({
+        root: {
+            '& > *': {
+                margin: theme.spacing(1),
+            },
+        },
+    }));
 
     return (
         <div
@@ -55,59 +61,32 @@ const useStyles = makeStyles((theme) => ({
 const Status = props => {
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
-
     const handleChange = (event, newValue) => {
-        // console.log('event.target.textContent>>>',event.target.textContent);
-        props.selectCategory(event.target.textContent)
         setValue(newValue);
     };
 
-    // console.log('----', props);
-    // let selectedCategory = props.selectCategory;
-    // function handleCategoryClick(e) {
-    //     console.log(e.target.textContent);
-    //     selectedCategory = e.target.textContent
-    //     selectCategory(e.target.textContent)
-    // }
+    useEffect(async() => {
+        let data = await getCategoryeData()
+        props.setCategories(data);
+        props.selectCategory(data.results[0].name);
+        
+    }, []);
     return (
         <>
             <div className={classes.root}>
-                <AppBar position="static">
+                <AppBar position="static" style={{ marginTop: '65px' }}>
                     <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
                         {props.categories.map((category, idx) => {
-                            return <Tab key={idx} label={category} {...a11yProps(idx)} />
+                            return <Tab onClick={() => { props.selectCategory(category.name) }} key={idx} label={category.display_name} {...a11yProps(idx)} />
                         })}
-
-                        {/* <Tab label="Item Two" {...a11yProps(1)} /> */}
-                        {/* <Tab label="Item Three" {...a11yProps(2)} /> */}
                     </Tabs>
                 </AppBar>
-       
             </div>
         </>
     )
 }
-
-
-// we only care about state from the store, no actions needed
 const mapStateToProps = state => ({
     categories: state.categories.categories,
 });
-
-const mapDispatchToProps = { selectCategory };
-
-// no need to add dispatch part (no actions)
+const mapDispatchToProps = { selectCategory, setCategories };
 export default connect(mapStateToProps, mapDispatchToProps)(Status);
-
-
-
-
-
-
-
-
-
-
-
-
-
